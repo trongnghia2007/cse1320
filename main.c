@@ -3,16 +3,18 @@
 
 #define MAX_EVENTS 100
 
+// Global variable for keeping event count
+int eventCount = 0;
+
+// Struct for managing event
 typedef struct {
     char title[100];
     char category[50];
-    char date[12];
+    int year, month, day;
     int rsvp_count;
     int id;
 } Event;
-
 Event events[MAX_EVENTS];
-int eventCount = 0;
 
 // load data from file
 void loadFromFile() {
@@ -22,11 +24,13 @@ void loadFromFile() {
         return;
     }
     while (eventCount < MAX_EVENTS && fscanf(f,
-        "%d|%[^|]|%[^|]|%[^|]|%d\n",
+        "%d|%[^|]|%[^|]|%d/%d/%d|%d\n",
         &events[eventCount].id,
         events[eventCount].title,
         events[eventCount].category,
-        events[eventCount].date,
+        &events[eventCount].year,
+        &events[eventCount].month,
+        &events[eventCount].day,
         &events[eventCount].rsvp_count)
         != EOF
     ) eventCount++;
@@ -42,11 +46,13 @@ void saveToFile() {
     }
     for (int i = 0; i < eventCount; i++) {
         fprintf(f,
-            "%d|%s|%s|%s|%d\n",
+            "%d|%s|%s|%d/%d/%d|%d\n",
             events[i].id,
             events[i].title,
             events[i].category,
-            events[i].date,
+            events[i].year,
+            events[i].month,
+            events[i].day,
             events[i].rsvp_count
         );
     }

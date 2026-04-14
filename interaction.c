@@ -1,18 +1,18 @@
 #include <stdio.h>
 
+extern int eventCount;
+extern struct Event {
+    char title[100];
+    char category[50];
+    int year, month, day;
+    int rsvp_count;
+    int id;
+} events[];
 extern void addEvent();
 extern void deleteEvent();
 extern void displayEvents();
 extern void searchByTitle();
 extern void searchByCategory();
-extern int eventCount;
-extern struct Event {
-    char title[100];
-    char category[50];
-    char date[12];
-    int rsvp_count;
-    int id;
-} events[];
 
 void rsvpEvent() {
     if (eventCount == 0) {
