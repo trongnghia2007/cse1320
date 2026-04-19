@@ -4,10 +4,10 @@
 
 ```text
 /
-├── main.c          # Main program, including event struct and file handling
-├── organizer.c     # Add/Delete events
-├── viewer.c        # Display/Search events
-├── interaction.c   # RSVP and Menu interactions
+├── main.c          # Main program
+├── helper.c        # Helper functions
+├── manager.c       # Manage events
+├── viewer.c        # View and search events
 └── events.txt      # Persistent storage
 ```
 
@@ -16,6 +16,6 @@
 Run these two commands in your terminal:
 
 ```bash
-gcc main.c organizer.c viewer.c interaction.c -o communiknot
+gcc main.c helper.c manager.c viewer.c -o communiknot
 ./communiknot
 ```

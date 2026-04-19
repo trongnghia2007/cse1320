@@ -1,69 +1,97 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "main.h"
 
+#define FILENAME "events.txt"
 #define MAX_EVENTS 100
 
-// Global variable for keeping event count
-int eventCount = 0;
+int main() {
+    // Initialize variables
+    Event events[MAX_EVENTS];
+    int count = 0;
 
-// Struct for managing event
-typedef struct {
-    char title[100];
-    char category[50];
-    int year, month, day;
-    int rsvp_count;
-    int id;
-} Event;
-Event events[MAX_EVENTS];
-
-// load data from file
-void loadFromFile() {
-    FILE *f = fopen("events.txt", "a+");
-    if (!f) {
+    // Load data from file
+    FILE *input = fopen(FILENAME, "a+");
+    if (!input) {
         printf("Error opening file!");
-        return;
+        return 1;
     }
-    while (eventCount < MAX_EVENTS && fscanf(f,
-        "%d|%[^|]|%[^|]|%d/%d/%d|%d\n",
-        &events[eventCount].id,
-        events[eventCount].title,
-        events[eventCount].category,
-        &events[eventCount].year,
-        &events[eventCount].month,
-        &events[eventCount].day,
-        &events[eventCount].rsvp_count)
+    while (count < MAX_EVENTS && fscanf(input,
+        "%d|%[^|]|%[^|]|%d/%d/%d|%d:%d|%d\n",
+        &events[count].id,
+        events[count].title,
+        events[count].category,
+        &events[count].date.year,
+        &events[count].date.month,
+        &events[count].date.day,
+        &events[count].time.hour,
+        &events[count].time.minute,
+        &events[count].rsvp)
         != EOF
-    ) eventCount++;
-    fclose(f);
-}
+    ) count++;
+    fclose(input);
 
-// Save data to file
-void saveToFile() {
-    FILE *f = fopen("events.txt", "w+");
-    if (!f) {
+    // Main menu
+    int choice;
+        do {
+        printf("\n=== CommuniKnot ===\n");
+        printf("1. Add Event\n");
+        printf("2. Edit Event\n");
+        printf("3. Delete Event\n");
+        printf("4. View Events\n");
+        printf("5. Search Event(s)\n");
+        printf("6. RSVP Event\n");
+        printf("7. Exit\n");
+        printf("Enter choice: ");
+        while(scanf("%d", &choice) != 1 || choice < 1 || choice > 7) {
+            printf("Invalid choice! Please enter 1-7: ");
+            while (getchar() != '\n');
+        }
+        getchar();
+        printf("\n");
+        switch (choice) {
+            case 1:
+                addEvent(events, &count);
+                break;
+            case 2:
+                editEvent(events, count);
+                break;
+            case 3:
+                deleteEvent(events, &count);
+                break;
+            case 4:
+                viewEvents(events, count);
+                break;
+            case 5:
+                searchEvent(events, count);
+                break;
+            case 6:
+                rsvpEvent(events, count);
+                break;
+            case 7:
+                printf("Exiting... Goodbye!\n");
+                break;
+        }
+    } while (choice != 7);
+    
+    // Save data to file
+    FILE *output = fopen(FILENAME, "w+");
+    if (!output) {
         printf("Error opening file!");
-        return;
+        return 1;
     }
-    for (int i = 0; i < eventCount; i++) {
-        fprintf(f,
-            "%d|%s|%s|%d/%d/%d|%d\n",
+    for (int i = 0; i < count; i++) {
+        fprintf(output,
+            "%d|%s|%s|%d/%d/%d|%02d:%02d|%d\n",
             events[i].id,
             events[i].title,
             events[i].category,
-            events[i].year,
-            events[i].month,
-            events[i].day,
-            events[i].rsvp_count
+            events[i].date.year,
+            events[i].date.month,
+            events[i].date.day,
+            events[i].time.hour,
+            events[i].time.minute,
+            events[i].rsvp
         );
     }
-    fclose(f);
-}
-
-extern void mainMenu();
-
-int main() {
-    loadFromFile();
-    mainMenu();
-    saveToFile();
+    fclose(output);
     return 0;
 }
